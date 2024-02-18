@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from "react-router-dom";
 import useWebSocket from "react-use-websocket"
 import Message from './Message'
+import SendNotification from '../utils/send_notification';
 
 
 function Chat() {
@@ -17,6 +18,11 @@ function Chat() {
       shouldReconnect: () => true,
     },
   )
+  
+  const messagesEndRef = useRef(null)
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
 
   const hanldeOnChange = (e) => {
     setEmpty(false)
@@ -45,8 +51,31 @@ function Chat() {
   useEffect(() => {
     if (lastJsonMessage) {
       setMessages(messages => [...messages, lastJsonMessage])
+
+      let jsonString = JSON.stringify(lastJsonMessage)
+      let message = JSON.parse(jsonString)
+
+      if (message.username === localStorage.getItem('email')) {
+        return
+      }
+
+      SendNotification(message)
     }
   }, [lastJsonMessage])
+
+
+  useEffect(() => {
+    let lenMessages = messages.length
+    if (lenMessages === 0) {
+      return
+    }
+
+    let lastMessage = messages[lenMessages - 1]
+    if (lastMessage.username === localStorage.getItem('email')) {
+      scrollToBottom()
+    }
+
+  }, [messages])
 
   useEffect(() => {
     if (!localStorage.getItem('email')) {
@@ -94,6 +123,8 @@ function Chat() {
                 {<Message message={message} />}
               </div>
             ))}
+
+            <div className='!m-0' ref={messagesEndRef} />
         </div>
 
         <div className="border-t border-gray-200 p-4">
