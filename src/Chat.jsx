@@ -75,6 +75,9 @@ function Chat() {
       scrollToBottom()
     }
 
+    // if the message is not in the top of the screen, don't scroll
+    
+
   }, [messages])
 
   useEffect(() => {
