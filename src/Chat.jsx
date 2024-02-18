@@ -8,7 +8,7 @@ function Chat() {
   const navigate = useNavigate()
   const [messages, setMessages] = useState([])
   const [message, setMessage] = useState('')
-  const WS_URL = 'ws://chat-golang-and-websockets-production.up.railway.app/ws?Authorization=ade3beca-c2eb-4e28-94cd-af40c0254142'
+  const WS_URL = 'wss://chat-golang-and-websockets-production.up.railway.app/ws?Authorization=ade3beca-c2eb-4e28-94cd-af40c0254142'
   const { sendJsonMessage, lastJsonMessage } = useWebSocket(
     WS_URL,
     {
