@@ -56,15 +56,15 @@ function Chat() {
 
   return (
     <>
-      <div className="flex-1 p:2 sm:p-6 justify-between flex flex-col h-screen">
-        <div className="flex sm:items-center px-2 md:px-0  justify-between py-3 border-b-2 border-gray-200">
+      <div className="flex-1 justify-between flex flex-col h-screen">
+        <div className="flex sm:items-center justify-between p-3 border-b border-gray-200">
             <div className="relative flex items-center space-x-4">
               <div className="relative">
                   
-              <img src="https://images.unsplash.com/photo-1549078642-b2ba4bda0cdb?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=3&amp;w=144&amp;h=144" alt="" className="w-10 sm:w-16 h-10 sm:h-16 rounded-full"/>
+              <img src="https://images.unsplash.com/photo-1549078642-b2ba4bda0cdb?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=3&amp;w=144&amp;h=144" alt="" className="w-10 sm:w-12 h-10 sm:h-12 rounded-full"/>
               </div>
               <div className="flex flex-col leading-tight">
-                  <div className="text-2xl mt-1 flex items-center">
+                  <div className="text-base mt-1 flex items-center">
                     <span className="text-gray-700 mr-3">Shadow Chat</span>
                   </div>
               </div>
@@ -96,7 +96,7 @@ function Chat() {
             ))}
         </div>
 
-        <div className="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
+        <div className="border-t border-gray-200 p-4">
             <form className="relative flex" onSubmit={addMessage}>
               {/* <span className="absolute inset-y-0 flex items-center">
                   <button type="button" className="inline-flex items-center justify-center rounded-full h-12 w-12 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">

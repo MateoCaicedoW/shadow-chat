@@ -5,7 +5,7 @@ function Message({message}) {
         if (message.username == email) {
             return (
                 <div className="flex items-end justify-end">
-                    <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-1 items-end">
+                    <div className="flex flex-col space-y-2 text-sm max-w-xs mx-2 order-1 items-end">
                         <div className="flex flex-col gap-1">
                             <span className="text-gray-500">{message.username}</span>
                             <span className="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white ">{message.message}</span>
@@ -18,7 +18,7 @@ function Message({message}) {
 
         return (
             <div className="flex items-end">
-                <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
+                <div className="flex flex-col space-y-2 text-sm max-w-xs mx-2 order-2 items-start">
                     <div className="flex flex-col gap-1">
                         <span className="text-gray-500">{message.username}</span>
                         <span className="px-4 py-2 rounded-lg inline-block rounded-br-none bg-gray-300 text-black ">{message.message}</span>
