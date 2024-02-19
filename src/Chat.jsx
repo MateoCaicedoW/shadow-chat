@@ -60,7 +60,7 @@ function Chat() {
         return
       }
 
-      if (showButton == false) {
+      if (!showButton) {
         scrollToBottom()
       }
 
