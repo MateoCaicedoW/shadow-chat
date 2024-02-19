@@ -3,13 +3,14 @@ import { useNavigate } from "react-router-dom";
 import useWebSocket from "react-use-websocket"
 import Message from './Message'
 import SendNotification from '../utils/send_notification';
-
+import { IoIosArrowDropdownCircle } from "react-icons/io";
 
 function Chat() {
   const navigate = useNavigate()
   const [messages, setMessages] = useState([])
   const [message, setMessage] = useState('')
   const [empty, setEmpty] = useState(false)
+  const [showButton, setShowButton] = useState(false)
   const WS_URL = `wss://${import.meta.env.VITE_API_URL}/ws?Authorization=${import.meta.env.VITE_API_KEY}`
   const { sendJsonMessage, lastJsonMessage } = useWebSocket(
     WS_URL,
@@ -24,7 +25,7 @@ function Chat() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }
 
-  const hanldeOnChange = (e) => {
+  const handleOnChange = (e) => {
     setEmpty(false)
     setMessage(e.target.value)
   }
@@ -59,6 +60,10 @@ function Chat() {
         return
       }
 
+      if (showButton == false) {
+        scrollToBottom()
+      }
+
       SendNotification(message)
     }
   }, [lastJsonMessage])
@@ -73,10 +78,8 @@ function Chat() {
     let lastMessage = messages[lenMessages - 1]
     if (lastMessage.username === localStorage.getItem('email')) {
       scrollToBottom()
+      setShowButton(false)
     }
-
-    // if the message is not in the top of the screen, don't scroll
-    
 
   }, [messages])
 
@@ -86,9 +89,22 @@ function Chat() {
     }
   } , [])
 
+
+  const handleScroll = (e) => {
+    // know if the user is in the bottom of the screen
+    if (e.target.scrollTop + e.target.clientHeight >= e.target.scrollHeight) {
+      setShowButton(false)
+      return
+    }
+
+    setShowButton(true)
+  }
+
+  let buttonBackClass = showButton ? 'block' : 'hidden'
+
   return (
     <>
-      <div className="flex-1 justify-between flex flex-col h-screen">
+      <div className="flex-1 justify-between flex flex-col h-screen relative">
         <div className="flex sm:items-center justify-between p-3 border-b border-gray-200">
             <div className="relative flex items-center space-x-4">
               <div className="relative">
@@ -120,13 +136,13 @@ function Chat() {
             </div>
         </div>
 
-        <div id="messages" className="bg-gray-100 flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch ">
+        <div id="messages" onScroll={handleScroll} className="bg-gray-100 flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch ">
             {messages.map((message, index) => (
               <div key={index}>
                 {<Message message={message} />}
               </div>
             ))}
-
+  
             <div className='!m-0' ref={messagesEndRef} />
         </div>
 
@@ -139,7 +155,7 @@ function Chat() {
                     </svg>
                   </button>
               </span> */}
-              <input type="text" value={message} placeholder="Write your message!" className={"w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-3 bg-gray-200 rounded-md py-3 " + (empty ? ' border border-red-500' : '')} onChange={hanldeOnChange}/>
+              <input type="text" value={message} placeholder="Write your message!" className={"w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-3 bg-gray-200 rounded-md py-3 " + (empty ? ' border border-red-500' : '')} onChange={handleOnChange}/>
               <div className="absolute right-0 items-center inset-y-0 sm:flex">
                   {/* <button type="button" className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="h-6 w-6 text-gray-600">
@@ -165,6 +181,10 @@ function Chat() {
                   </button>
               </div>
             </form>
+        </div>
+
+        <div className={"absolute bottom-24 right-0 bg-white border rounded-l-lg p-2 cursor-pointer transition-all delay-100 " + buttonBackClass} onClick={scrollToBottom}>
+            <IoIosArrowDropdownCircle size={24} />
         </div>
       </div>
     </>
