@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import useWebSocket from "react-use-websocket"
 import Message from './Message'
 import SendNotification from '../utils/send_notification';
-import { IoIosArrowDropdownCircle } from "react-icons/io";
+import { IoArrowDown } from "react-icons/io5";
 
 function Chat() {
   const navigate = useNavigate()
@@ -60,10 +60,6 @@ function Chat() {
         return
       }
 
-      if (!showButton) {
-        scrollToBottom()
-      }
-
       SendNotification(message)
     }
   }, [lastJsonMessage])
@@ -77,8 +73,12 @@ function Chat() {
 
     let lastMessage = messages[lenMessages - 1]
     if (lastMessage.username === localStorage.getItem('email')) {
-      scrollToBottom()
       setShowButton(false)
+      scrollToBottom()
+    }
+
+    if (!showButton) {
+      scrollToBottom()
     }
 
   }, [messages])
@@ -184,7 +184,9 @@ function Chat() {
         </div>
 
         <div className={"absolute bottom-24 right-0 bg-white border rounded-l-lg p-2 cursor-pointer transition-all delay-100 " + buttonBackClass} onClick={scrollToBottom}>
-            <IoIosArrowDropdownCircle size={24} />
+            <div className='p-0.5 rounded-full border border-blue-500'>
+              <IoArrowDown size={14} color='#3b83f6' />
+            </div>
         </div>
       </div>
     </>
