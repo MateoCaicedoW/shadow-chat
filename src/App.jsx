@@ -1,13 +1,16 @@
 import { BrowserRouter, Routes, Route} from "react-router-dom";
 import  Chat  from "./Chat";
-import  Register from "./Register";
+import  Login from "./auth/Login";
+import SignUp from "./auth/SignUp";
 
 function App() {
     return (
         <main >
             <BrowserRouter>
                 <Routes>
-                    <Route path="/" element={<Register />} />
+                    <Route path="/" element={<Login />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/sign-up" element={<SignUp />} />
                     <Route path="/chat" element={<Chat />} />
                     <Route path="*" element={
                     <section className="bg-white dark:bg-gray-900 ">
