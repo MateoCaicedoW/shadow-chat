@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from "react-router-dom";
 import useWebSocket from "react-use-websocket"
 import Message from './Message'
-import SendNotification from '../utils/send_notification';
+import SendNotification from '../../utils/send_notification';
 import { IoArrowDown } from "react-icons/io5";
 import InputChat from './InputChat';
 
@@ -12,7 +12,7 @@ function Chat() {
   const [message, setMessage] = useState('')
   const [empty, setEmpty] = useState(false)
   const [showButton, setShowButton] = useState(false)
-  const WS_URL = `${import.meta.env.VITE_API_WEBSOCKET_URL}/ws?Authorization=${import.meta.env.VITE_API_KEY}`
+  const WS_URL = `${import.meta.env.VITE_API_WEBSOCKET_URL}/ws?Authorization=Bearer ${sessionStorage.getItem(import.meta.env.VITE_SHADOW_SESSION)}`
   const { sendJsonMessage, lastJsonMessage } = useWebSocket(
     WS_URL,
     {
@@ -83,12 +83,6 @@ function Chat() {
     }
 
   }, [messages])
-
-  useEffect(() => {
-    if (!localStorage.getItem('email')) {
-      navigate('/')
-    }
-  } , [])
 
 
   const handleScroll = (e) => {

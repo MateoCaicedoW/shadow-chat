@@ -1,16 +1,17 @@
-import { BrowserRouter, Routes, Route} from "react-router-dom";
-import  Chat  from "./Chat";
-import  Login from "./auth/Login";
-import SignUp from "./auth/SignUp";
+import { BrowserRouter, Routes, Route, useNavigate} from "react-router-dom";
+import  Chat  from "./components/Chat";
+import Login from "./components/auth/Login";
+import SignUp from "./components/auth/SignUp";
 
 function App() {
+    
     return (
         <main >
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<Login />} />
                     <Route path="/login" element={<Login />} />
-                    <Route path="/sign-up" element={<SignUp />} />
+                    <Route path="/sign-up" element={< SignUp />} />
                     <Route path="/chat" element={<Chat />} />
                     <Route path="*" element={
                     <section className="bg-white dark:bg-gray-900 ">

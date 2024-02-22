@@ -1,21 +1,35 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { currentUser, login } from "../../api/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { setAuthErrors, emptyAuthErrors } from "../../redux/authErrors";
+import { setCurrentUser } from "../../redux/currentUserSlice"
+import {Input}  from "../Input";
+
 function Login(){
     const [email, setEmail] = useState("");
     const navigate = useNavigate()
-
-    const handleSubmit = (e) => {
+    const dispatch = useDispatch()
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        localStorage.setItem('email', email)
+        const res = await login(email)
+        if (res.status !== 200) {
+            dispatch(setAuthErrors(res.data))
+            return
+        }
+
+        dispatch(setAuthErrors(emptyAuthErrors))
+        sessionStorage.setItem(import.meta.env.VITE_SHADOW_SESSION, res.data.token)
+
+        const resp = await currentUser(res.data.token)
+        if (resp.status !== 200) {
+            dispatch(setCurrentUser(null))
+            return
+        }
+
+        dispatch(setCurrentUser(resp.data))
         navigate('/chat')
     }
-
-
-    useEffect(() => {
-        if (localStorage.getItem('email')) {
-            navigate('/chat')
-        }
-    }, [])
 
     return (
         <div className="h-screen">
@@ -32,7 +46,7 @@ function Login(){
                         <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
                             <div>
                                 <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
-                                <input type="email" name="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required onChange={e => setEmail(e.target.value)} />
+                                <Input type="email" name="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" handleChange={e => setEmail(e.target.value)}   />
                             </div>
 
                             <button type="submit" className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Login</button>
