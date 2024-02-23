@@ -1,6 +1,8 @@
+import { useAuth } from "./auth/AuthProvider"
+
 function Message({message}) {
-    let email = localStorage.getItem('email')
-    
+    const { user } = useAuth()
+    const email = user.email
     const messageHTML = (message) => {
         if (message.username == email) {
 
