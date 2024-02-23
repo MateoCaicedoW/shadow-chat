@@ -12,6 +12,7 @@ function Chat() {
   const [empty, setEmpty] = useState(false)
   const [showButton, setShowButton] = useState(false)
   const { user, logout } = useAuth()
+  const inputChat = useRef(null)
   
   const WS_URL = `${import.meta.env.VITE_API_WEBSOCKET_URL}/ws`
   const { sendJsonMessage, lastJsonMessage } = useWebSocket(
@@ -55,6 +56,7 @@ function Chat() {
 
     setMessage('')
     setEmpty(false)
+    inputChat.current.focus()
   }
 
   // Run when a new WebSocket message is received (lastJsonMessage)
@@ -150,7 +152,7 @@ function Chat() {
 
               <button onClick={handleLogout} type="button" className="inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M13.3333 14.0875L17.5 10.025M17.5 10.025L13.3333 5.96252M17.5 10.025H7.5M7.5 2.71252H6.5C5.09987 2.71252 4.3998 2.71252 3.86502 2.9782C3.39462 3.21189 3.01217 3.58478 2.77248 4.04342C2.5 4.56483 2.5 5.2474 2.5 6.61252V13.4375C2.5 14.8027 2.5 15.4852 2.77248 16.0066C3.01217 16.4653 3.39462 16.8382 3.86502 17.0719C4.3998 17.3375 5.09987 17.3375 6.5 17.3375H7.5" stroke="#98A2B3" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M13.3333 14.0875L17.5 10.025M17.5 10.025L13.3333 5.96252M17.5 10.025H7.5M7.5 2.71252H6.5C5.09987 2.71252 4.3998 2.71252 3.86502 2.9782C3.39462 3.21189 3.01217 3.58478 2.77248 4.04342C2.5 4.56483 2.5 5.2474 2.5 6.61252V13.4375C2.5 14.8027 2.5 15.4852 2.77248 16.0066C3.01217 16.4653 3.39462 16.8382 3.86502 17.0719C4.3998 17.3375 5.09987 17.3375 6.5 17.3375H7.5" stroke="#98A2B3" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"></path>
                 </svg>
               </button>
               {/* <button type="button" className="inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">
@@ -190,7 +192,7 @@ function Chat() {
                     </svg>
                   </button>
               </span> */}
-              <InputChat message={message} handleOnChange={handleOnChange} empty={empty} />
+              <InputChat reference={inputChat} message={message} handleOnChange={handleOnChange} empty={empty} />
 
               <div className="absolute right-0 items-center inset-y-0 sm:flex">
                   <label htmlFor='file' type="button" className="inline-flex items-center justify-center rounded-full h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">
