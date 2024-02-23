@@ -34,6 +34,7 @@ export const AuthProvider = ({ children }) => {
 
     // call this function to sign out logged in user
     const logout = () => {
+        sessionStorage.removeItem(import.meta.env.VITE_SHADOW_SESSION)
         dispatch(removeCurrentUser())
         navigate("/", { replace: true });
     };

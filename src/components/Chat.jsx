@@ -65,7 +65,7 @@ function Chat() {
       let jsonString = JSON.stringify(lastJsonMessage)
       let message = JSON.parse(jsonString)
 
-      if (message.username === localStorage.getItem('email')) {
+      if (message.username === user.email) {
         return
       }
 
@@ -81,7 +81,7 @@ function Chat() {
     }
 
     let lastMessage = messages[lenMessages - 1]
-    if (lastMessage.username === localStorage.getItem('email')) {
+    if (lastMessage.username === user.email) {
       setShowButton(false)
       scrollToBottom()
     }
@@ -120,7 +120,7 @@ function Chat() {
     reader.onload = function() {
       sendJsonMessage({
         message: reader.result,
-        username: localStorage.getItem('email'),
+        username: user.email ,
         kind : "image"
       })
 
