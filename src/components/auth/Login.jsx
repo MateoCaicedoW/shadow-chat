@@ -1,34 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { currentUser, login } from "../../api/auth";
-import { useDispatch, useSelector } from "react-redux";
-import { setAuthErrors, emptyAuthErrors } from "../../redux/authErrors";
-import { setCurrentUser } from "../../redux/currentUserSlice"
+import {useState } from "react";
 import {Input}  from "../Input";
+import { useAuth } from "./AuthProvider";
 
 function Login(){
     const [email, setEmail] = useState("");
-    const navigate = useNavigate()
-    const dispatch = useDispatch()
+    const {signin} = useAuth()
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const res = await login(email)
-        if (res.status !== 200) {
-            dispatch(setAuthErrors(res.data))
-            return
-        }
-
-        dispatch(setAuthErrors(emptyAuthErrors))
-        sessionStorage.setItem(import.meta.env.VITE_SHADOW_SESSION, res.data.token)
-
-        const resp = await currentUser(res.data.token)
-        if (resp.status !== 200) {
-            dispatch(setCurrentUser(null))
-            return
-        }
-
-        dispatch(setCurrentUser(resp.data))
-        navigate('/chat')
+        await signin({email})
     }
 
     return (

@@ -1,22 +1,25 @@
 import { useEffect, useState, useRef } from 'react'
-import { useNavigate } from "react-router-dom";
 import useWebSocket from "react-use-websocket"
 import Message from './Message'
 import SendNotification from '../../utils/send_notification';
 import { IoArrowDown } from "react-icons/io5";
 import InputChat from './InputChat';
+import { useAuth } from './auth/AuthProvider';
 
 function Chat() {
-  const navigate = useNavigate()
   const [messages, setMessages] = useState([])
   const [message, setMessage] = useState('')
   const [empty, setEmpty] = useState(false)
   const [showButton, setShowButton] = useState(false)
-  const WS_URL = `${import.meta.env.VITE_API_WEBSOCKET_URL}/ws?Authorization=Bearer ${sessionStorage.getItem(import.meta.env.VITE_SHADOW_SESSION)}`
+  const { user } = useAuth()
+  
+  const WS_URL = `${import.meta.env.VITE_API_WEBSOCKET_URL}/ws`
   const { sendJsonMessage, lastJsonMessage } = useWebSocket(
     WS_URL,
     {
-      share: false,
+      queryParams: {
+        Authorization: `Bearer ${sessionStorage.getItem(import.meta.env.VITE_SHADOW_SESSION)}`
+      },
       shouldReconnect: () => true,
     },
   )
@@ -41,8 +44,8 @@ function Chat() {
 
     sendJsonMessage({
       message: message,
-      username: localStorage.getItem('email'),
-      color : "red"
+      username: user.email,
+      kind : "text"
     })
 
     setMessage('')

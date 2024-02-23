@@ -16,6 +16,7 @@ export const currentUserSlice = createSlice({
         removeCurrentUser: (state) => {
             state.value = null;
         },
+
     },
 });
 
