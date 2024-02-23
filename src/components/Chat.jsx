@@ -11,7 +11,7 @@ function Chat() {
   const [message, setMessage] = useState('')
   const [empty, setEmpty] = useState(false)
   const [showButton, setShowButton] = useState(false)
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
   
   const WS_URL = `${import.meta.env.VITE_API_WEBSOCKET_URL}/ws`
   const { sendJsonMessage, lastJsonMessage } = useWebSocket(
@@ -27,6 +27,11 @@ function Chat() {
   const messagesEndRef = useRef(null)
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView()
+  }
+
+  const handleLogout = () => {
+    sessionStorage.removeItem(import.meta.env.VITE_SHADOW_SESSION)
+    logout()
   }
 
   const handleOnChange = (e) => {
@@ -142,6 +147,12 @@ function Chat() {
               </div>
             </div>
             <div className="flex items-center space-x-2">
+
+              <button onClick={handleLogout} type="button" className="inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M13.3333 14.0875L17.5 10.025M17.5 10.025L13.3333 5.96252M17.5 10.025H7.5M7.5 2.71252H6.5C5.09987 2.71252 4.3998 2.71252 3.86502 2.9782C3.39462 3.21189 3.01217 3.58478 2.77248 4.04342C2.5 4.56483 2.5 5.2474 2.5 6.61252V13.4375C2.5 14.8027 2.5 15.4852 2.77248 16.0066C3.01217 16.4653 3.39462 16.8382 3.86502 17.0719C4.3998 17.3375 5.09987 17.3375 6.5 17.3375H7.5" stroke="#98A2B3" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </button>
               {/* <button type="button" className="inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="h-6 w-6">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
