@@ -21,7 +21,7 @@ function Message({message}) {
                 </div>
             )
         }
-        const content = message.kind === 'image' ? <span className="px-4 py-2 rounded-lg rounded-br-none bg-gray-300 text-black break-all"><img src={message.content} alt=""  width="500" /></span>  : <span className="px-4 py-2 rounded-lg rounded-br-none bg-gray-300 text-black break-all">{message.content}</span>
+        const content = message.kind === 'image' ? <span className="px-4 py-2 rounded-lg rounded-bl-none bg-gray-300 text-black break-all"><img src={message.content} alt=""  width="500" /></span>  : <span className="px-4 py-2 rounded-lg rounded-bl-none bg-gray-300 text-black break-all">{message.content}</span>
 
         return (
             <div className="flex items-end">
