@@ -5,6 +5,7 @@ import SignUp from "./components/auth/SignUp";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { AuthProvider } from "./components/auth/AuthProvider";
 import { WithoutUser } from "./components/auth/WithoutUser";
+import { Home } from "./components/Home";
 
 function App() {
     
@@ -32,7 +33,7 @@ function App() {
                             path="/chat"
                             element={
                                 <ProtectedRoute>
-                                    <Chat />
+                                    <Home />
                                 </ProtectedRoute>
                             }
                         />

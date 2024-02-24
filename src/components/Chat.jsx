@@ -5,6 +5,7 @@ import SendNotification from '../../utils/send_notification';
 import { IoArrowDown } from "react-icons/io5";
 import InputChat from './InputChat';
 import { useAuth } from './auth/AuthProvider';
+import { sendMessage } from '../api/messages';
 
 function Chat() {
   const [messages, setMessages] = useState([])
@@ -15,11 +16,11 @@ function Chat() {
   const inputChat = useRef(null)
   
   const WS_URL = `${import.meta.env.VITE_API_WEBSOCKET_URL}/ws`
-  const { sendJsonMessage, lastJsonMessage } = useWebSocket(
+  const { lastJsonMessage } = useWebSocket(
     WS_URL,
     {
       queryParams: {
-        Authorization: `Bearer ${sessionStorage.getItem(import.meta.env.VITE_SHADOW_SESSION)}`
+        Authorization: `Bearer ${user.token}`
       },
       shouldReconnect: () => true,
     },
@@ -31,7 +32,6 @@ function Chat() {
   }
 
   const handleLogout = () => {
-    sessionStorage.removeItem(import.meta.env.VITE_SHADOW_SESSION)
     logout()
   }
 
@@ -40,7 +40,7 @@ function Chat() {
     setMessage(e.target.value)
   }
 
-  const addMessage = (e) => {
+  const addMessage = async (e) => {
     e.preventDefault()
 
     if (message.trim() === '') {
@@ -48,11 +48,20 @@ function Chat() {
       return
     }
 
-    sendJsonMessage({
-      message: message,
-      username: user.email,
-      kind : "text"
-    })
+    const messageInfo = {
+      content: message,
+      user_first_name: user.first_name,
+      user_last_name: user.last_name,
+      user_email: user.email,
+      kind : "text",
+      user_picture: user.picture
+    }
+
+    const resp = await sendMessage(user.token, messageInfo)
+    if (resp.status !== 200) {
+      return
+    }
+
 
     setMessage('')
     setEmpty(false)
@@ -67,7 +76,7 @@ function Chat() {
       let jsonString = JSON.stringify(lastJsonMessage)
       let message = JSON.parse(jsonString)
 
-      if (message.username === user.email) {
+      if (message.user_email === user.email) {
         return
       }
 
@@ -83,7 +92,7 @@ function Chat() {
     }
 
     let lastMessage = messages[lenMessages - 1]
-    if (lastMessage.username === user.email) {
+    if (lastMessage.user_email === user.email) {
       setShowButton(false)
       scrollToBottom()
     }
@@ -119,13 +128,22 @@ function Chat() {
     let reader = new FileReader()
     reader.readAsDataURL(file)
 
-    reader.onload = function() {
-      sendJsonMessage({
-        message: reader.result,
-        username: user.email ,
-        kind : "image"
-      })
+    reader.onload = async function() {
+      const messageInfo = {
+        content: reader.result,
+        user_first_name: user.first_name,
+        user_last_name: user.last_name,
+        user_email: user.email,
+        kind : "image",
+        user_picture: user.picture
+      }
 
+      const resp = await sendMessage(user.token, messageInfo)
+      if (resp.status !== 200) {
+        return
+      }
+
+      
       setMessage('')
       setEmpty(false)
     }
@@ -140,11 +158,11 @@ function Chat() {
             <div className="relative flex items-center space-x-4">
               <div className="relative">
                   
-              <img src="https://images.unsplash.com/photo-1549078642-b2ba4bda0cdb?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=3&amp;w=144&amp;h=144" alt="" className="w-10 sm:w-12 h-10 sm:h-12 rounded-full"/>
+              <img src="https://images.unsplash.com/photo-1549078642-b2ba4bda0cdb?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=3&amp;w=144&amp;h=144" alt="" className="w-10 h-10 rounded-full"/>
               </div>
               <div className="flex flex-col leading-tight">
                   <div className="text-base mt-1 flex items-center">
-                    <span className="text-gray-700 mr-3">Shadow Chat</span>
+                    <span className="text-gray-700 mr-3 text-2xl font-semibold"></span>
                   </div>
               </div>
             </div>

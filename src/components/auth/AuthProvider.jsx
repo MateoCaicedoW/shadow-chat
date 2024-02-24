@@ -20,21 +20,22 @@ export const AuthProvider = ({ children }) => {
         }
 
         dispatch(setAuthErrors(emptyAuthErrors))
-        sessionStorage.setItem(import.meta.env.VITE_SHADOW_SESSION, res.data.token)
-
-        const resp = await currentUser(res.data.token)
+        const token = res.data.token
+        const resp = await currentUser(token)
         if (resp.status !== 200) {
             dispatch(removeCurrentUser())
             return
         }
 
-        dispatch(setCurrentUser(resp.data))
+        let details = resp.data
+        details.token = token
+
+        dispatch(setCurrentUser(details))
         navigate("/chat");
     };
 
     // call this function to sign out logged in user
     const logout = () => {
-        sessionStorage.removeItem(import.meta.env.VITE_SHADOW_SESSION)
         dispatch(removeCurrentUser())
         navigate("/", { replace: true });
     };
