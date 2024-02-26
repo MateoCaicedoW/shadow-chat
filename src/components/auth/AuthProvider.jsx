@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
         details.token = token
 
         dispatch(setCurrentUser(details))
-        navigate("/chat");
+        navigate("/chats");
     };
 
     // call this function to sign out logged in user

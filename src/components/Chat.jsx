@@ -6,15 +6,30 @@ import { IoArrowDown } from "react-icons/io5";
 import InputChat from './InputChat';
 import { useAuth } from './auth/AuthProvider';
 import { sendMessage } from '../api/messages';
+import { fetcher } from '../api/fetcher';
+import { useParams } from 'react-router-dom';
 
-function Chat() {
+const Chat = () => {
   const [messages, setMessages] = useState([])
   const [message, setMessage] = useState('')
   const [empty, setEmpty] = useState(false)
   const [showButton, setShowButton] = useState(false)
   const { user, logout } = useAuth()
   const inputChat = useRef(null)
-  
+  const params = useParams()
+
+  useEffect(() => {
+    const existsChat = async () => {
+      const resp = await fetcher(user.token, `chats/exists?first_user=${user.id}&second_user=${params.id}`)
+      if (resp.status !== 200) {
+        return
+      }
+    }
+
+  existsChat()
+
+  }, [])
+
   const WS_URL = `${import.meta.env.VITE_API_WEBSOCKET_URL}/ws`
   const { lastJsonMessage } = useWebSocket(
     WS_URL,

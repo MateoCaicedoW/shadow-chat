@@ -4,7 +4,7 @@ import { useAuth } from "./AuthProvider";
 export const WithoutUser = ({ children }) => {
     const { user } = useAuth();
     if (user) {
-        return <Navigate to="/chat" />;
+        return <Navigate to="/chats" />;
     }
     return children;
 

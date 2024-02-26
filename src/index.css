@@ -27,3 +27,7 @@
 #messages {
   height: calc(100vh - 100px);
 }
+
+.overlay{
+  background: rgba(49,49,49,0.8);
+}

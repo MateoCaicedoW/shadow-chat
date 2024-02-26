@@ -5,10 +5,9 @@ import SignUp from "./components/auth/SignUp";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { AuthProvider } from "./components/auth/AuthProvider";
 import { WithoutUser } from "./components/auth/WithoutUser";
-import { Home } from "./components/Home";
-
+import { SideBar } from "./components/SideBar";
+import { EmptyState } from "./components/chats/EmptyState";
 function App() {
-    
     return (
         <main >
             <BrowserRouter>
@@ -29,14 +28,19 @@ function App() {
                                 <SignUp />
                             </WithoutUser>
                         } />
-                        <Route
-                            path="/chat"
-                            element={
+
+                        <Route path="chats" element={<ProtectedRoute>
+                                    <SideBar>
+                                        <EmptyState/>
+                                    </SideBar>
+                                </ProtectedRoute>} />
+                        <Route path="/chats/:id" element={
                                 <ProtectedRoute>
-                                    <Home />
-                                </ProtectedRoute>
-                            }
-                        />
+                                    <SideBar>
+                                        <Chat />
+                                    </SideBar>
+                                </ProtectedRoute>} />
+                        
                         <Route path="*" element={
                         <section className="bg-white dark:bg-gray-900 ">
                             <div className="container flex items-center min-h-screen px-6 py-12 mx-auto">
