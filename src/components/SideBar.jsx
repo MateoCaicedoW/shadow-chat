@@ -7,12 +7,13 @@ import { CreateChatModal } from "./chats/CreateChatModal";
 import { useInit } from "../hooks/useInit";
 import { useDispatch, useSelector } from "react-redux";
 import { getChats } from "../redux/chatSlice";
+import { Link } from "react-router-dom";
 
 export const SideBar = ({children}) => {    
     const chats = useSelector(state => state.chats)
     const dispatch = useDispatch()
     const [open, setOpen] = useState(false)
-    const { user } = useAuth()
+    const { user, logout } = useAuth()
     const [openModal, setOpenModal] = useState(false)
     useInit();
 
@@ -30,6 +31,10 @@ export const SideBar = ({children}) => {
 
     const handleDropdown = () => {
         setOpen(!open)
+    }
+
+    const handleLogout = () => {
+        logout()
     }
 
     const isOpen = open ? "block" : "hidden"
@@ -53,6 +58,11 @@ export const SideBar = ({children}) => {
                                             Create Chat
                                         </button>
                                     </li>
+                                    <li>
+                                        <button onClick={handleLogout} className="block px-4 py-2 text-gray-800 hover:text-gray-400">
+                                            Log out
+                                        </button>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -64,15 +74,19 @@ export const SideBar = ({children}) => {
                     {
                         chats.map((chat, index) => {
                             return (
-                                <div key={index} className="flex items-center mb-4 cursor-pointer hover:bg-gray-100 p-2 rounded-md">
+                                <Link to={"/chats/"+chat.id} key={index} className="flex items-center mb-4 cursor-pointer hover:bg-gray-100 p-2 rounded-md">
                                     <div className="w-12 h-12 bg-gray-300 rounded-full mr-3">
                                         <img src="https://placehold.co/200x/ffa8e4/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" alt="User Avatar" className="w-12 h-12 rounded-full"/>
                                     </div>
                                     <div className="flex-1">
-                                        <h2 className="text-lg font-semibold"></h2>
-                                        <p className="text-gray-600">Hoorayy!!</p>
+                                        <h2 className="text-lg font-semibold">
+                                            {
+                                                chat.first_user_id === user.id ? chat.second_user_name : chat.first_user_name
+                                            }
+                                        </h2>
+                                        <p className="text-gray-600">{chat.last_message}</p>
                                     </div>
-                                </div>
+                                </Link>
                             )
                         })
                     }

@@ -11,7 +11,7 @@ export const chatSlice = createSlice({
         },
 
         addChat: (state, action) => {
-            [...state, action.payload];
+            state.push(action.payload);
         },
 
         removeChat: (state) => {

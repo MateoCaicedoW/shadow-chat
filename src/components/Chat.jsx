@@ -7,57 +7,40 @@ import InputChat from './InputChat';
 import { useAuth } from './auth/AuthProvider';
 import { sendMessage } from '../api/messages';
 import { fetcher } from '../api/fetcher';
-import { useParams } from 'react-router-dom';
-import { createChat, getMessagesFrom } from '../api/chats';
-import { useDispatch } from 'react-redux';
-import { addChat } from '../redux/chatSlice';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getMessagesFrom } from '../api/chats';
 
 const Chat = () => {
   const [messages, setMessages] = useState([])
   const [message, setMessage] = useState('')
   const [empty, setEmpty] = useState(false)
   const [showButton, setShowButton] = useState(false)
-  const { user, logout } = useAuth()
+  const { user } = useAuth()
   const inputChat = useRef(null)
   const params = useParams()
-  const dataFromServer = useRef(false)
-  const dispatch = useDispatch()  
+  const navigate = useNavigate()
+
   const existsChat = async () => {
-    const resp = await fetcher(user.token, `chats/exists?first_user=${user.id}&second_user=${params.id}`)
-    if (resp.status !== 200) {
+    const resp = await fetcher(user.token, `chats/${params.id}/exists_by_user_id`)
+
+    if (resp.status !== 200 || !resp.data) {
+      navigate('/chats')
       return
     }
 
-    
-    console.log(resp.data, params.id, user.id);
-    if (resp.data) {
-      console.log('Chat exists');
-      const respMessages = await getMessagesFrom(user.token, user.id, params.id)
-      if (respMessages.status !== 200) {
-        return
-      }
-
-      setMessages(respMessages.data)
-
+    const respMessages = await getMessagesFrom(user.token, params.id)
+    if (respMessages.status !== 200) {
       return
     }
 
-    const respCreate = await createChat(user.token, user.id, params.id)
-    if (respCreate.status !== 200) {
-      return
-    }
-
-    console.log(respCreate.data);
-    dispatch(addChat(respCreate.data))
+    setMessages(respMessages.data)
   }
   
   useEffect(() => {
-    if (dataFromServer.current) return;
-    dataFromServer.current = true;
     existsChat()
   }, [params.id])
 
-  const WS_URL = `${import.meta.env.VITE_API_WEBSOCKET_URL}/ws`
+  const WS_URL = `${import.meta.env.VITE_API_WEBSOCKET_URL}/ws/${params.id}`
   const { lastJsonMessage } = useWebSocket(
     WS_URL,
     {
@@ -71,10 +54,6 @@ const Chat = () => {
   const messagesEndRef = useRef(null)
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView()
-  }
-
-  const handleLogout = () => {
-    logout()
   }
 
   const handleOnChange = (e) => {
@@ -92,14 +71,16 @@ const Chat = () => {
 
     const messageInfo = {
       content: message,
+      user_id: user.id,
       user_first_name: user.first_name,
       user_last_name: user.last_name,
       user_email: user.email,
       kind : "text",
-      user_picture: user.picture
+      user_picture: user.picture,
+      element_id: params.id
     }
 
-    const resp = await sendMessage(user.token, messageInfo)
+    const resp = await sendMessage(user.token, params.id, messageInfo)
     if (resp.status !== 200) {
       return
     }
@@ -210,11 +191,6 @@ const Chat = () => {
             </div>
             <div className="flex items-center space-x-2">
 
-              <button onClick={handleLogout} type="button" className="inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M13.3333 14.0875L17.5 10.025M17.5 10.025L13.3333 5.96252M17.5 10.025H7.5M7.5 2.71252H6.5C5.09987 2.71252 4.3998 2.71252 3.86502 2.9782C3.39462 3.21189 3.01217 3.58478 2.77248 4.04342C2.5 4.56483 2.5 5.2474 2.5 6.61252V13.4375C2.5 14.8027 2.5 15.4852 2.77248 16.0066C3.01217 16.4653 3.39462 16.8382 3.86502 17.0719C4.3998 17.3375 5.09987 17.3375 6.5 17.3375H7.5" stroke="#98A2B3" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"></path>
-                </svg>
-              </button>
               {/* <button type="button" className="inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="h-6 w-6">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
