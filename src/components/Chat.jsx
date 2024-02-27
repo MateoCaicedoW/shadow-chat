@@ -8,6 +8,9 @@ import { useAuth } from './auth/AuthProvider';
 import { sendMessage } from '../api/messages';
 import { fetcher } from '../api/fetcher';
 import { useParams } from 'react-router-dom';
+import { createChat, getMessagesFrom } from '../api/chats';
+import { useDispatch } from 'react-redux';
+import { addChat } from '../redux/chatSlice';
 
 const Chat = () => {
   const [messages, setMessages] = useState([])
@@ -17,18 +20,42 @@ const Chat = () => {
   const { user, logout } = useAuth()
   const inputChat = useRef(null)
   const params = useParams()
-
-  useEffect(() => {
-    const existsChat = async () => {
-      const resp = await fetcher(user.token, `chats/exists?first_user=${user.id}&second_user=${params.id}`)
-      if (resp.status !== 200) {
-        return
-      }
+  const dataFromServer = useRef(false)
+  const dispatch = useDispatch()  
+  const existsChat = async () => {
+    const resp = await fetcher(user.token, `chats/exists?first_user=${user.id}&second_user=${params.id}`)
+    if (resp.status !== 200) {
+      return
     }
 
-  existsChat()
+    
+    console.log(resp.data, params.id, user.id);
+    if (resp.data) {
+      console.log('Chat exists');
+      const respMessages = await getMessagesFrom(user.token, user.id, params.id)
+      if (respMessages.status !== 200) {
+        return
+      }
 
-  }, [])
+      setMessages(respMessages.data)
+
+      return
+    }
+
+    const respCreate = await createChat(user.token, user.id, params.id)
+    if (respCreate.status !== 200) {
+      return
+    }
+
+    console.log(respCreate.data);
+    dispatch(addChat(respCreate.data))
+  }
+  
+  useEffect(() => {
+    if (dataFromServer.current) return;
+    dataFromServer.current = true;
+    existsChat()
+  }, [params.id])
 
   const WS_URL = `${import.meta.env.VITE_API_WEBSOCKET_URL}/ws`
   const { lastJsonMessage } = useWebSocket(

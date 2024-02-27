@@ -5,23 +5,27 @@ import { IoIosMore } from "react-icons/io";
 import ClickAwayListener from "react-click-away-listener";
 import { CreateChatModal } from "./chats/CreateChatModal";
 import { useInit } from "../hooks/useInit";
+import { useDispatch, useSelector } from "react-redux";
+import { getChats } from "../redux/chatSlice";
 
 export const SideBar = ({children}) => {    
-    const [chats, setChats] = useState([])
+    const chats = useSelector(state => state.chats)
+    const dispatch = useDispatch()
     const [open, setOpen] = useState(false)
     const { user } = useAuth()
     const [openModal, setOpenModal] = useState(false)
     useInit();
 
     useEffect(() => {
-        const getChats = async () => {
+        const loadChats = async () => {
             const resp = await myChats(user.token, user.id)
             if (resp.status !== 200) {
                 return
             }
-            setChats(resp.data)
+            
+            dispatch(getChats(resp.data)) 
         }
-        getChats()
+        loadChats()
     }, [])
 
     const handleDropdown = () => {
@@ -58,9 +62,9 @@ export const SideBar = ({children}) => {
             
                 <div className="overflow-y-auto p-3" style={{maxHeight: "calc(100vh - 66px)"}}>
                     {
-                        chats.map(chat => {
+                        chats.map((chat, index) => {
                             return (
-                                <div className="flex items-center mb-4 cursor-pointer hover:bg-gray-100 p-2 rounded-md">
+                                <div key={index} className="flex items-center mb-4 cursor-pointer hover:bg-gray-100 p-2 rounded-md">
                                     <div className="w-12 h-12 bg-gray-300 rounded-full mr-3">
                                         <img src="https://placehold.co/200x/ffa8e4/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" alt="User Avatar" className="w-12 h-12 rounded-full"/>
                                     </div>
