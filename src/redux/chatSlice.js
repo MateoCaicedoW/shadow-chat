@@ -11,7 +11,8 @@ export const chatSlice = createSlice({
         },
 
         addChat: (state, action) => {
-            state.push(action.payload);
+            // add the new chat to the first position of the array
+            state.unshift(action.payload);
         },
 
         removeChat: (state) => {
