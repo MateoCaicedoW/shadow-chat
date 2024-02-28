@@ -17,9 +17,13 @@ export const CreateChatModal = ({open, setOpen}) => {
     }
 
     const handleNavigate = async(id) => {
-
+        console.log("HEREEEEE", id);
+        console.log("USER", user.id);
+        console.log("TOKEN", user.token);
         const resp = await fetcher(user.token, `chats/exists?first_user_id=${user.id}&second_user_id=${id}`)
         if (resp.status !== 200) {
+            console.log("HERE");
+            console.log(resp);
             return
         }
 
