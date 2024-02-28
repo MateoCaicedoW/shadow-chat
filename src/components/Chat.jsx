@@ -103,7 +103,7 @@ const Chat = () => {
         return
       }
 
-      SendNotification(message)
+      // SendNotification(message)
     }
   }, [lastJsonMessage])
 

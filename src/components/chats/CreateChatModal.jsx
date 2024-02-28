@@ -35,9 +35,8 @@ export const CreateChatModal = ({open, setOpen}) => {
             return
         }
 
-        dispatch(addChat(respCreate.data))
         setOpen(false)
-        navigate(`/chats/${respCreate.data.id}`)
+        navigate(`/chats/${respCreate.data.chat.id}`)
     }
 
     return (
