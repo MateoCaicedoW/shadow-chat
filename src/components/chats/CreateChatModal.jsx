@@ -23,7 +23,10 @@ export const CreateChatModal = ({open, setOpen}) => {
             return
         }
 
+        console.log("HEREWEERE", resp.data.exists);
+
         if (resp.data.exists) {
+            console.log("CHAT", resp.data.chat_id);
             setOpen(false)
             navigate(`/chats/${resp.data.chat_id}`)
             return
@@ -31,11 +34,14 @@ export const CreateChatModal = ({open, setOpen}) => {
 
 
         const respCreate = await createChat(user.token, user.id, id)
+        console.log("RESP", respCreate);
         if (respCreate.status !== 201) {
+            console.log("HERE");
             return
         }
 
         setOpen(false)
+        console.log("CHAT", respCreate.data.chat);
         navigate(`/chats/${respCreate.data.chat.id}`)
     }
 
