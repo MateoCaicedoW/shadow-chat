@@ -17,20 +17,12 @@ export const CreateChatModal = ({open, setOpen}) => {
     }
 
     const handleNavigate = async(id) => {
-        console.log("HEREEEEE", id);
-        console.log("USER", user.id);
-        console.log("TOKEN", user.token);
         const resp = await fetcher(user.token, `chats/exists?first_user_id=${user.id}&second_user_id=${id}`)
         if (resp.status !== 200) {
-            console.log("HERE");
-            console.log(resp);
             return
         }
 
-        console.log("HEREWEERE", resp.data.exists);
-
         if (resp.data.exists) {
-            console.log("CHAT", resp.data.chat_id);
             setOpen(false)
             navigate(`/chats/${resp.data.chat_id}`)
             return
@@ -38,14 +30,11 @@ export const CreateChatModal = ({open, setOpen}) => {
 
 
         const respCreate = await createChat(user.token, user.id, id)
-        console.log("RESP", respCreate);
         if (respCreate.status !== 201) {
-            console.log("HERE");
             return
         }
 
         setOpen(false)
-        console.log("CHAT", respCreate.data.chat);
         navigate(`/chats/${respCreate.data.chat.id}`)
     }
 
