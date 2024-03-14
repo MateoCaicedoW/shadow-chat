@@ -28,18 +28,20 @@ function App() {
                                 <SignUp />
                             </WithoutUser>
                         } />
-
-                        <Route path="chats" element={<ProtectedRoute>
-                                    <SideBar>
-                                        <EmptyState/>
-                                    </SideBar>
-                                </ProtectedRoute>} />
-                        <Route path="/chats/:id" element={
+                        
+                        <Route
+                            path="/chats/*"
+                            element={
                                 <ProtectedRoute>
                                     <SideBar>
-                                        <Chat />
+                                        <Routes>
+                                            <Route path="/" element={<EmptyState />} />
+                                            <Route path=":id" element={<Chat />} />
+                                        </Routes>
                                     </SideBar>
-                                </ProtectedRoute>} />
+                                </ProtectedRoute>
+                            }
+                        />
                         
                         <Route path="*" element={
                         <section className="bg-white dark:bg-gray-900 ">

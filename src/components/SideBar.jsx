@@ -8,7 +8,7 @@ import { useInit } from "../hooks/useInit";
 import { useDispatch, useSelector } from "react-redux";
 import { getChats, addChat } from "../redux/chatSlice";
 import { Link } from "react-router-dom";
-import useWebSocket from "react-use-websocket";
+import { webSocket } from "../hooks/websocket";
 
 export const SideBar = ({children}) => {    
     const chats = useSelector(state => state.chats)
@@ -16,30 +16,25 @@ export const SideBar = ({children}) => {
     const [open, setOpen] = useState(false)
     const { user, logout } = useAuth()
     const [openModal, setOpenModal] = useState(false)
+    webSocket()
     useInit();
 
-    const WS_URL = `${import.meta.env.VITE_API_WEBSOCKET_URL}/ws/chats`
-    const { lastJsonMessage } = useWebSocket(WS_URL, {
-        queryParams: {
-            Authorization: `Bearer ${user.token}`
-        },
-        shouldReconnect: () => true,
-        },
-    )
+
+    // console.log(ws);
 
      // Run when a new WebSocket message is received (lastJsonMessage)
-    useEffect(() => {
-        if (lastJsonMessage) {
-            let jsonString = JSON.stringify(lastJsonMessage)
-            let resp = JSON.parse(jsonString)
-            let chat = resp.chat
-            if (chat.first_user_id !== user.id && chat.second_user_id !== user.id) {
-                return
-            }
+    // useEffect(() => {
+    //     if (lastJsonMessage) {
+    //         let jsonString = JSON.stringify(lastJsonMessage)
+    //         let resp = JSON.parse(jsonString)
+    //         let chat = resp.chat
+    //         if (chat.first_user_id !== user.id && chat.second_user_id !== user.id) {
+    //             return
+    //         }
 
-            dispatch(addChat(chat))
-        }
-    }, [lastJsonMessage])
+    //         dispatch(addChat(chat))
+    //     }
+    // }, [lastJsonMessage])
 
     useEffect(() => {
         const loadChats = async () => {

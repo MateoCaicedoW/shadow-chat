@@ -9,7 +9,7 @@ import { sendMessage } from '../api/messages';
 import { fetcher } from '../api/fetcher';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getMessagesFrom } from '../api/chats';
-
+import { webSocket } from "../hooks/websocket";
 const Chat = () => {
   const [messages, setMessages] = useState([])
   const [message, setMessage] = useState('')
@@ -19,7 +19,7 @@ const Chat = () => {
   const inputChat = useRef(null)
   const params = useParams()
   const navigate = useNavigate()
-
+  const ws = webSocket()
   const existsChat = async () => {
     const resp = await fetcher(user.token, `chats/${params.id}/exists_by_user_id`)
 
@@ -38,19 +38,9 @@ const Chat = () => {
   
   useEffect(() => {
     existsChat()
+    ws.send(JSON.stringify({ action: 'join-room', message: params.id }))
   }, [params.id])
 
-  const WS_URL = `${import.meta.env.VITE_API_WEBSOCKET_URL}/ws/${params.id}`
-  const { lastJsonMessage } = useWebSocket(
-    WS_URL,
-    {
-      queryParams: {
-        Authorization: `Bearer ${user.token}`
-      },
-      shouldReconnect: () => true,
-    },
-  )
-  
   const messagesEndRef = useRef(null)
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView()
@@ -91,21 +81,21 @@ const Chat = () => {
     inputChat.current.focus()
   }
 
-  // Run when a new WebSocket message is received (lastJsonMessage)
-  useEffect(() => {
-    if (lastJsonMessage) {
-      setMessages(messages => [...messages, lastJsonMessage])
+  // // Run when a new WebSocket message is received (lastJsonMessage)
+  // useEffect(() => {
+  //   if (lastJsonMessage) {
+  //     setMessages(messages => [...messages, lastJsonMessage])
 
-      let jsonString = JSON.stringify(lastJsonMessage)
-      let message = JSON.parse(jsonString)
+  //     let jsonString = JSON.stringify(lastJsonMessage)
+  //     let message = JSON.parse(jsonString)
 
-      if (message.user_email === user.email) {
-        return
-      }
+  //     if (message.user_email === user.email) {
+  //       return
+  //     }
 
-      // SendNotification(message)
-    }
-  }, [lastJsonMessage])
+  //     // SendNotification(message)
+  //   }
+  // }, [lastJsonMessage])
 
 
   useEffect(() => {
